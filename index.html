@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fireside Chats</title>
+    <style>
+        body { 
+            font-family: 'Courier New', monospace; 
+            background-color: #222; 
+            color: #AAA; 
+        }
+        a {
+        color: #DDD;
+        text-decoration: none;
+        }
+        .content { 
+            margin: auto; 
+            width: 50%; 
+            padding: 10px; 
+            background-color: rgba(0, 0, 0, 0.8); /* semi-transparent black background */
+        }
+        .tab { display: none; }
+        .tab.active { display: block; }
+        .nav-container { display: flex; justify-content: flex-start; flex-wrap: wrap; }
+        .nav-button, .audio-control {
+            background-color: #333;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 50px;
+        }
+        .thought-entry {
+            margin-bottom: 20px;
+        }
+        .thought-title {
+            font-weight: bold;
+            color: #FFF;
+        }
+        .thought-text {
+            margin-bottom: 10px;
+        }
+        .thought-image {
+            width: 100%;
+            height: auto;
+        }
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-gap: 10px;
+        }
+        .image-grid img {
+            width: 100%;
+            height: auto;
+            cursor: pointer;
+        }
+        #matrix-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+    </style>
+    <script>
+        var audioElement;
+
+        function switchTab(tabId) {
+            var tabs = document.getElementsByClassName('tab');
+            for (var i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove('active');
+            }
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        function togglePlay() {
+            if (audioElement.paused) {
+                audioElement.play();
+            } else {
+                audioElement.pause();
+            }
+        }
+
+        function enlargeImage(image) {
+            if (image.style.width === "100%") {
+                image.style.width = "50%"; // Set the width back to the original size
+            } else {
+                image.style.width = "100%"; // Set the width to 100% to enlarge the image
+            }
+        }
+
+        window.onload = function() {
+            audioElement = document.getElementById('background-music');
+            audioElement.loop = true;
+            audioElement.play();
+
+            // Matrix effect
+            var canvas = document.getElementById('matrix-canvas');
+            var ctx = canvas.getContext('2d');
+
+            // make the canvas full screen
+            canvas.height = window.innerHeight;
+            canvas.width = window.innerWidth;
+
+            // the characters
+            var characters = '0123456789ABCDEF';
+            characters = characters.split('');
+
+            // number of columns for the rain
+            var columns = canvas.width/10; // an array will store the drop positions
+            var drops = [];
+
+            // x below is the x coordinate
+            // 1 = y co-ordinate of the drop(same for every drop initially)
+            for (var x = 0; x < columns; x++)
+                drops[x] = 1; 
+
+            // drawing the characters
+            function drawMatrix() {
+                // Black BG for the canvas
+                // translucent BG to show trail
+
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.fillStyle = '#0F0'; // green text
+                ctx.font = '10px Courier New';
+                // looping over drops
+                for (var i = 0; i < drops.length; i++) {
+                    // a random character to print
+                    var text = characters[Math.floor(Math.random()*characters.length)];
+                    // x = i*10, y = value of drops[i]*10
+                    ctx.fillText(text, i*10, drops[i]*10);
+
+                    // sending the drop back to the top randomly after it has crossed the screen
+                    // adding a randomness to the reset to make the drops scattered on the Y axis
+                    if (drops[i]*10 > canvas.height && Math.random() > 0.975)
+                        drops[i] = 0;
+
+                    // incrementing Y coordinate
+                    drops[i]++;
+                }
+            }
+
+            setInterval(drawMatrix, 66); // drawing every 33ms
+        };
+    </script>
+</head>
+<body>
+    <canvas id="matrix-canvas"></canvas>
+    <audio id="background-music">
+        <source src="sounds/woodBurn.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    <button class="audio-control" onclick="togglePlay()">🎵</button>
+    <div class="content">
+        <h1>Fireside Chats</h1>
+        
+        <div class="nav-container">
+            <button class="nav-button" onclick="switchTab('thoughts')">What's New</button>
+            <button class="nav-button" onclick="switchTab('work')">Hacks</button>
+            <button class="nav-button" onclick="switchTab('blog')">Blog</button>
+            <button class="nav-button" onclick="switchTab('about')">About Jushkun</button>
+        </div>
+        
+<div id="about" class="tab">
+
+    <h2 style="color: #FFD700; margin-bottom: 0px;">About Me</h2>
+    <div style="display: flex; align-items: center;">
+        <p style="text-align: justify; margin-top: 0;margin-right: 0px;">
+            I am Juxihong Julaiti, a researcher with a focus on machine learning, optimization, and engineering. My expertise spans multiple domains including artificial intelligence, optimization, and simulations. I started my career as a Research Assistant at the Laboratory for Intelligent Systems and Analytics and since then have worked in diverse roles with companies including TE Connectivity, OnPoint, and currently, Meta. My work includes deploying machine learning models, optimizing system performance, and developing end-to-end analytical solutions that have significantly improved operations. I hold a Ph.D. in Operations Research & Industrial Engineering from The Pennsylvania State University and have contributed to numerous publications and presentations, sharing my insights and knowledge in the field of machine learning and optimization.
+        </p>
+        <img src="imgs/profile.png" alt="Profile Image" style="width: 35%; border-radius: 0; margin-left: 10px;">
+    </div>
+    <p>
+        <strong><h2 style="color: #FFD700;">Contact</h2></strong>
+        Email: <a href="mailto:juxihongjulaiti1225@gmail.com" style="color: #DDD;">juxihongjulaiti1225@gmail.com</a> <br>
+        LinkedIn: <a href="https://linkedin.com/in/juxihongjulaiti" target="_blank" style="color: #DDD;">linkedin.com/in/juxihongjulaiti</a> <br>
+        GitHub: <a href="https://github.com/j-julaiti?tab=repositories" target="_blank" style="color: #DDD;">github</a>
+    </p>
+    <p>
+        <strong><h2 style="color: #FFD700;">Technical Strengths</h2></strong>
+        Languages: Python, Java, SQL, Bash. <br>
+        Simulations: Discrete-event simulation, agent-based simulation. <br>
+        Optimization: Bayesian Optimization, Genetic Algorithm, Simulated Annealing, Guided Local Search. <br>
+        Machine Learning: Regression, KNN, K-mean, Random Forest, Neural Network, LSTM, Autoencoder, REINFORCE, 
+        Actor-Critic, Deterministic Policy-Gradient, Deep Q-Network.
+    </p>
+    <p>
+        <strong><h2 style="color: #FFD700;">Education</h2></strong>
+        Ph.D. in Operations Research & Industrial Engineering - The Pennsylvania State University (PSU)
+    </p>
+</div>
+
+        
+<div id="work" class="tab">
+    <h2>Real-time audio visualization | 2021-01 | <a href="https://github.com/j-julaiti/soundviz">Github link</a></h2>
+    <div class="image-container" style="text-align: center;">
+    <video width="600" controls>
+    <source src="videos/hello_there.mov" type="video/mp4">
+    Your browser does not support the video.
+    </div>
+
+    <h2>State Track | 2020-06 </h2>
+    <div class="image-container" style="text-align: center;">
+    <video width="600" controls>
+    <source src="videos/state_track.mov" type="video/mp4">
+    Your browser does not support the video.
+    </div>
+
+    <h2>Jarvis Interface | 2015-05 | <a href="https://github.com/j-julaiti/jarvis-interface/tree/main/JarvisProject">Github link</a></h2>
+    <div class="image-container" style="text-align: center;">
+    <video width="600" controls>
+    <source src="videos/jarvis_demo_1.mov" type="video/mp4">
+    Your browser does not support the video.
+    </div>
+  </video>
+</div>
+
+<div id="thoughts" class="tab  active">    
+    <!-- Thought 1 -->
+    <div class="thought-entry">
+        <h3 class="thought-title">June 25, 2023</h3>
+        <p class="thought-text">Although I had a website built from a template, I built yet another one with the help of ChatGPT. I have to say it is pretty handy! I am pretty sure I will change how it looks along the way, let me log the initial look of the website here.</p>
+        <div class="image-container" style="text-align: center;">
+            <img class="thought-image" src="imgs/06252023.png" alt="D " style="width: 50%; cursor: pointer;" onclick="enlargeImage(this);">
+        </div>
+    </div>
+
+    <div class="thought-entry">
+        <h3 class="thought-title">March 24, 2023</h3>
+        <p class="thought-text">The book "GOD & The New Physics" is the first physics book I have read in the past few years, and it was a fun/slow read. <br><br>
+
+        I love the end of the book: Science offers a surer path than religion in the search of God. It is my deep conviction that only by understanding the world in all its many aspects -reductionist and holist, mathematical and poetical, through forces, fields, and particles as well as through good evil - that we will come to understand how ourselves and the meaning behind this universe, our home. <br><br>
+
+        The universe has been here for 13 billion years, and the sun is still going to burn for the next 5 billion years, yet we, as humans, started agriculture about 10 thousand years ago and we had cities and social structures for the past 5~6 thousand years. I can not help but wondering what is ahead of us, when we are going to really know the world around us. </p>
+
+    </div>
+
+    <div class="thought-entry">
+        <h3 class="thought-title">Feb 11, 2023</h3>
+        <p class="thought-text">Finished William Zinsser's "Writing to Learn"! <br><br>
+
+            This book essentially is a collection of great authors across different domains, and the key idea is that as long as you can think clearly, you can write clearly, no matter how complicated your domain is. <br><br>
+
+        I read snips of books across many domains that I have never thought I would read about (music, art, animals etc.), and I am surprised to see that I can go into a new world so quickly and easily. <br><br>
+
+        As per recommended by the author, on to the next book: "God & the new physics" by Paul Davies.
+        </p>
+      <!--   <div class="image-container" style="text-align: center;">
+            <img class="thought-image" src="imgs/03202023.png" alt="D " style="width: 50%; cursor: pointer;" onclick="enlargeImage(this);">
+        </div> -->
+    </div>
+
+    <div class="thought-entry">
+        <h3 class="thought-title">Jan 5, 2023</h3>
+        <p class="thought-text">Done reading "On Writing Well" by William Zinsser, and I really cannot stop the "chat" with him, so I am going to start his another book call "Writing to Learn"! <br><br>
+
+        I should have read this book while I was in the grad school because the biggest take away I got from this book is the courage to write, to learn, and to practice. I read so many papers that I had no clue what are the author trying to say, or why they are doing things this way, and I thought I am too dumb to understand them. Well, apparently, as a reader, we often think like that, and the fact is that the author also has a very large responsiblity to express the ideas with clarity and simplicity.
+        </p>
+      <!--   <div class="image-container" style="text-align: center;">
+            <img class="thought-image" src="imgs/01162023.jpeg" alt="D " style="width: 50%; cursor: pointer;" onclick="enlargeImage(this);">
+        </div> -->
+    </div>
+
+    <div class="thought-entry">
+        <h3 class="thought-title">Jan 2, 2023</h3>
+       <p>I wrote a piece of code to track how I am spending my time around mid 2020. Since then I have been using it to manage my routines and track my time.</p>
+
+        <p>The high level view of 2022 is shown in the attachment, here are a few key observations:
+        <p>- As expected, working, sleeping and being with the family (duty) are my top 3 daily activities (bar plot, row 1 col 1).</p>
+        <p>- The number of days I have done mindfulness, workout and reading are actually less than I expected (bar plot, row 1 col 2). But the number of days doing workout and mindfulness are better than last year (last year's data is not shown, but the number of days I have done workout in 2021/2022 are 137/164, and mindfulness in 2021/2022 are 236/334).</p>
+        <p>- I started to sleep early (not shown) and wake up early (green line, row 2 col 1) towards the end of the year since I felt the late evening usually is not productive for me. I also moved my routines including mindfulness (black line, row 2 col 1), reading (blue line, row 2 col 2), and workout (red line, row 2 col 2) to the morning. Surprisingly, I am sleeping more (lineplot, row 3 col1) and better as the frequency of waking up early (& can't go back to sleep) is decreased. Moreover, I am reading more (blue line, row 3 col 2).</p>
+
+        <p>For year 2023, my goals are to increase the frequency of reading & workout, and keep a more strict sleeping schedule (sleep early and wake up early)</p>
+
+        <div align="center">
+        <img src="imgs/01032023.png" class="size-blog-masonry-image-two-c" alt=" " title="" width="50%" />
+        </div>
+
+    </div>
+
+    <div class="thought-entry">
+        <h3 class="thought-title">Dec 22, 2022</h3>
+        <p class="thought-text">Second time finishing "Grit" by Angela Duckworth. I still remember that I was having a hard time back in 2018 trying to implement reinforcement learning algorithms with a continuous action space. I still remember the day after I did it, Guli and I went to NYC to take a break. <br><br>
+
+        As for the book, it really highlights two points: 1) having passion and perseverance are more important than innate talent; 2) having a growth mindset (the belief that ability and intelligence can be developed through dedication, hard work, and a love of learning) really makes a difference.</p>
+
+    </div>
+
+    <div class="thought-entry">
+        <h3 class="thought-title">Nov 21, 2022</h3>
+        <p class="thought-text">First time working in a virtual reality (quest 2)! </p>
+        <div class="image-container" style="text-align: center;">
+            <img class="thought-image" src="imgs/11212023.jpg" alt="D " style="width: 50%; cursor: pointer;" onclick="enlargeImage(this);">
+        </div>
+        <p class="thought-text">The resolution was fine, but not good for working a long time.</p>
+    </div>
+
+    <div class="thought-entry">
+        <h3 class="thought-title">Aug 30, 2022</h3>
+        <p class="thought-text">Finished "The Power of Now" by Eckhart Tolle. It is a simple yet powerful book, and my biggest take away would be the idea of "letting it pass through you". <br><br>
+
+        It refers to the practice of fully experiencing and acknowledging emotions, thoughts, or sensations without resisting them or trying to change them. Instead of getting caught up in the drama or narrative of the emotion or thought, you simply observe it,recognize it,  accept it, and allow it to pass through you.</p>
+
+    </div>
+    
+<!--  
+    <div class="thought-entry">
+        <h3 class="thought-title">June 24, 2023</h3>
+        <p class="thought-text">This is another example thought. Today I took a walk in the park and it was very refreshing. Here are some pictures from the walk:</p>
+        <div class="image-grid">
+            <a href="path_to_your_image1.jpg" target="_blank"><img src="path_to_your_image1.jpg" alt="Description of image 1"></a>
+            <a href="path_to_your_image2.jpg" target="_blank"><img src="path_to_your_image2.jpg" alt="Description of image 2"></a>
+            <a href="path_to_your_image3.jpg" target="_blank"><img src="path_to_your_image3.jpg" alt="Description of image 3"></a>
+            <a href="path_to_your_image4.jpg" target="_blank"><img src="path_to_your_image4.jpg" alt="Description of image 4"></a>
+            <a href="path_to_your_image5.jpg" target="_blank"><img src="path_to_your_image5.jpg" alt="Description of image 5"></a>
+            <a href="path_to_your_image6.jpg" target="_blank"><img src="path_to_your_image6.jpg" alt="Description of image 6"></a>
+            <a href="path_to_your_image7.jpg" target="_blank"><img src="path_to_your_image7.jpg" alt="Description of image 7"></a>
+            <a href="path_to_your_image8.jpg" target="_blank"><img src="path_to_your_image8.jpg" alt="Description of image 8"></a>
+            <a href="path_to_your_image9.jpg" target="_blank"><img src="path_to_your_image9.jpg" alt="Description of image 9"></a>
+        </div>
+    </div> -->
+</div>
+
+<div id="blog" class="tab">
+    <h2>Blog</h2>
+    <p>Here's where you can link to your blog posts, or even write brief summaries of them to entice visitors to read more.</p>
+</div>
+
+</div>
+
+</body>
+</html>
